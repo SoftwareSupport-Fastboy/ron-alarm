@@ -1,0 +1,1842 @@
+:root {
+    --bg-main: #202020;
+    --bg-sidebar: #181818;
+    --bg-card: #2c2c2c;
+    --bg-card-hover: #383838;
+    --accent-gold: #f3b33e;
+    --text-main: #ffffff;
+    --text-muted: #a0a0a0;
+    --border-color: #3f3f3f;
+    --scrollbar-track: #1c1c1c;
+    --scrollbar-thumb: #3a3a3a;
+    --scrollbar-thumb-hover: #525252;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI Variable Display", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ============================================================
+   TÙY CHỈNH THANH CUỘN (SCROLLBAR DARK MODE)
+   ============================================================ */
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+}
+
+/* ============================================================
+   BỐ CỤC CHUNG
+   ============================================================ */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px 8px;
+    border-right: 1px solid #111;
+    flex-shrink: 0;
+    transition: width 0.25s ease, padding 0.25s ease;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.nav-list {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    position: relative;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.nav-item.active {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-weight: 600;
+}
+
+.nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px;
+    background-color: var(--accent-gold);
+    border-radius: 3px;
+}
+
+.nav-item i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-bottom {
+    padding: 10px 8px;
+    border-top: 1px solid #282828;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 6px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* MAIN CONTAINER */
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bg-main);
+    min-width: 0;
+    /* Ngăn lỗi flexbox tràn nội dung */
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px 10px 32px;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.top-bar h1 {
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.ct-clock-badge {
+    background: rgba(243, 179, 62, 0.15);
+    border: 1px solid rgba(243, 179, 62, 0.4);
+    color: var(--accent-gold);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+/* CARDS GRID */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 20px 32px 80px 32px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    align-content: start;
+    grid-auto-rows: 165px;
+}
+
+.alarm-card {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+
+    /* CỐ ĐỊNH CHIỀU CAO VÀ PHÂN BỔ ĐỀU NỘI DUNG */
+    height: 165px;             /* Cố định chiều cao thẻ bằng với hàng */
+    box-sizing: border-box;
+    justify-content: space-between; /* Đẩy hàng thứ (days-row) luôn nằm sát đáy */
+}
+
+.alarm-card:hover {
+    border-color: #555;
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+}
+
+.alarm-card.is-stopped {
+    opacity: 0.55;
+}
+
+.alarm-card.is-stopped .time-display {
+    color: #999;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.time-display {
+    font-size: 38px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.time-ampm {
+    font-size: 15px;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-delete-card {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+}
+
+.btn-delete-card:hover {
+    color: #ff5252;
+}
+
+/* TOGGLE SWITCH */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    border: 1px solid #777;
+    border-radius: 22px;
+    transition: .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #aaa;
+    border-radius: 50%;
+    transition: .2s;
+}
+
+#alarmView {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+input:checked+.slider {
+    background-color: var(--accent-gold);
+    border-color: var(--accent-gold);
+}
+
+input:checked+.slider:before {
+    transform: translateX(22px);
+    background-color: #000;
+}
+
+.countdown-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* Đổi màu vàng nhạt cho báo thức dưới 1 ngày */
+.countdown-text.highlight-soon {
+    color: #f3713e;
+    font-weight: 1000;
+}
+
+.alarm-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 6px;
+    color: #f0f0f0;
+    white-space: nowrap;       /* Giới hạn 1 dòng */
+    overflow: hidden;          /* Ẩn chữ thừa */
+    text-overflow: ellipsis;   /* Thêm dấu ... nếu tên quá dài */
+}
+
+.days-row {
+    display: flex;
+    gap: 4px;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.day-pill {
+    font-size: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+}
+
+.day-pill.active {
+    background-color: rgba(243, 179, 62, 0.2);
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.bottom-status-bar {
+    margin-top: auto;
+    background: #2b2512;
+    border-top: 1px solid #4a3e1c;
+    padding: 10px 32px;
+    font-size: 12px;
+    color: #ebd18c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.floating-actions {
+    position: fixed;
+    bottom: 45px;
+    right: 32px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.btn-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: #2e2e2e;
+    border: 1px solid #444;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-circle:hover {
+    background: #3e3e3e;
+}
+
+.btn-circle.primary {
+    background: var(--accent-gold);
+    color: #000;
+    border: none;
+}
+
+.btn-circle.primary:hover {
+    background: #df9f2d;
+}
+
+/* ============================================================
+   SETTINGS MENU (DROPDOWN / POPUP)
+   ============================================================ */
+.settings-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.settings-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    min-width: 210px;
+    background-color: #252525;
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    animation: fadeInMenu 0.15s ease-out;
+}
+
+.settings-menu.show {
+    display: flex;
+}
+
+@keyframes fadeInMenu {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #e5e5e5;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.settings-menu-item i {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+    color: var(--accent-gold);
+}
+
+.modal-btn.danger {
+    background: #d32f2f;
+    color: #ffffff;
+}
+
+.modal-btn.danger:hover {
+    background: #b71c1c;
+}
+
+.settings-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.settings-menu-item.danger {
+    color: #ff6b6b;
+}
+
+.settings-menu-item.danger i {
+    color: #ff6b6b;
+}
+
+.settings-menu-item.danger:hover {
+    background-color: rgba(255, 77, 77, 0.12);
+    color: #ff8585;
+}
+
+.settings-menu-divider {
+    height: 1px;
+    background: #383838;
+    margin: 4px 6px;
+}
+
+/* MODALS */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+}
+
+.modal-content {
+    background: #252525;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 10px;
+    border: 1px solid #3c3c3c;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ============================================================
+   BỘ CHỌN GIỜ (WINDOWS 11 TIME PICKER)
+   ============================================================ */
+.time-picker-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0 20px 0;
+    user-select: none;
+}
+
+.chevrons-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+}
+
+.chevrons-row .wheel-btn {
+    width: 68px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+    border-radius: 4px;
+}
+
+.chevrons-row .wheel-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.chevrons-row .chevron-spacer {
+    width: 14px;
+}
+
+/* ============================================================
+   CÁC HÀNG ĐIỀU KHIỂN BÊN DƯỚI BỘ CHỌN GIỜ TRONG MODAL
+   ============================================================ */
+.modal-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.modal-row.no-border {
+    margin-bottom: 8px;
+}
+
+.modal-row.sub-row {
+    margin-top: -2px;
+    margin-bottom: 12px;
+}
+
+.row-icon {
+    width: 20px;
+    font-size: 17px;
+    color: #dfdfdf;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.row-icon-space {
+    width: 20px;
+    flex-shrink: 0;
+}
+
+/* Ô nhập text / date */
+.row-input {
+    flex: 1;
+    background: #2b2b2b;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+
+.row-input:focus {
+    border-color: var(--accent-gold);
+    background: #232323;
+}
+
+/* Checkbox chuẩn Windows 11 */
+.win-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #e5e5e5;
+    user-select: none;
+}
+
+.win-check input[type="checkbox"] {
+    display: none;
+}
+
+.win-box {
+    width: 19px;
+    height: 19px;
+    border-radius: 4px;
+    border: 1px solid #777;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    position: relative;
+}
+
+.win-check input[type="checkbox"]:checked+.win-box {
+    background-color: var(--accent-gold);
+    border-color: var(--accent-gold);
+}
+
+.win-check input[type="checkbox"]:checked+.win-box::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 11px;
+    color: #000;
+}
+
+/* Nút chọn thứ tròn: Su, M, Tu, We, Th, Fri, Sa */
+.days-circle-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.day-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--accent-gold);
+    color: var(--accent-gold);
+    background: transparent;
+    transition: all 0.15s ease;
+    outline: none;
+}
+
+.day-circle:hover {
+    background: rgba(243, 179, 62, 0.15);
+}
+
+.day-circle.active {
+    background: var(--accent-gold);
+    color: #000;
+    border-color: var(--accent-gold);
+}
+
+/* NÚT PLAY NGHE THỬ ÂM THANH */
+.btn-sound-play {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: #2b2b2b;
+    border: 1px solid #444;
+    color: var(--accent-gold);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-sound-play:hover {
+    background: #383838;
+    border-color: var(--accent-gold);
+    color: #ffffff;
+}
+
+/* Hiệu ứng khi đang phát nhạc */
+.btn-sound-play.playing {
+    background: var(--accent-gold);
+    color: #000000;
+    border-color: var(--accent-gold);
+    animation: pulsePlay 1.2s infinite ease-in-out;
+}
+
+@keyframes pulsePlay {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+/* Dropdown Sound & Snooze có mũi tên Windows */
+.row-select-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.row-select {
+    width: 100%;
+    appearance: none;
+    background: #2b2b2b;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 9px 32px 9px 12px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.row-select:focus {
+    border-color: var(--accent-gold);
+}
+
+.select-chevron {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 11px;
+    color: #999;
+}
+
+/* GỢI Ý TÊN BÁO THỨC (QUICK TAGS) */
+.quick-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.quick-tag {
+    background: #252525;
+    border: 1px solid #444;
+    border-radius: 14px;
+    color: #b0b0b0;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    outline: none;
+}
+
+.quick-tag:hover {
+    background: #333333;
+    color: #ffffff;
+    border-color: var(--accent-gold);
+}
+
+.quick-tag:active {
+    background: var(--accent-gold);
+    color: #000000;
+    border-color: var(--accent-gold);
+    transform: scale(0.95);
+}
+
+/* Nút Save & Cancel có Icon */
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s ease;
+}
+
+.modal-btn.save {
+    background: var(--accent-gold);
+    color: #000;
+}
+
+.modal-btn.save:hover {
+    background: #df9f2d;
+}
+
+.modal-btn.cancel {
+    background: #2b2b2b;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.modal-btn.cancel:hover {
+    background: #383838;
+}
+
+/* Khung hiển thị chính với viền vàng phía dưới */
+.time-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 64px;
+    background: #1e1e1e;
+    border: 1px solid #383838;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px;
+    margin: 4px 0;
+    transition: border-color 0.2s, background-color 0.2s;
+    box-sizing: border-box;
+}
+
+/* Khi người dùng click/focus vào bất kỳ ô nào bên trong */
+.time-box:focus-within {
+    border-bottom-color: var(--accent-gold);
+    background: #181818;
+}
+
+/* Từng ô giá trị */
+.time-cell {
+    width: 68px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 300;
+    color: #b0b0b0;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.time-cell.ampm {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Trạng thái được chọn (Focus/Active) giống hình mẫu */
+.time-cell:focus {
+    background: #2e2e2e;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.time-sep {
+    width: 14px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 300;
+    color: #777;
+    padding-bottom: 4px;
+}
+
+.modal-input-group {
+    margin-bottom: 16px;
+}
+
+.modal-input {
+    width: 100%;
+    background: #1d1d1d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-btn.save {
+    background: var(--accent-gold);
+    color: #000;
+}
+
+.modal-btn.save:hover {
+    background: #df9f2d;
+}
+
+.modal-btn.cancel {
+    background: #333;
+    color: #fff;
+}
+
+/* PLACEHOLDER */
+#timerView {
+    display: none;
+    padding: 50px 32px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN (MÀN HÌNH NHỎ & CỬA SỔ CO HẸP)
+   ============================================================ */
+
+/* Khi cửa sổ nhỏ hơn 768px: Tự động co nhỏ Sidebar thành Icon Rail */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+        padding: 14px 6px;
+    }
+
+    /* Ẩn toàn bộ nhãn chữ của Sidebar */
+    .sidebar-header span,
+    .nav-item span,
+    .user-profile span {
+        display: none;
+    }
+
+    .sidebar-header {
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        justify-content: center;
+        padding: 12px 0;
+    }
+
+    .user-profile {
+        justify-content: center;
+        padding: 8px 0;
+    }
+
+    .top-bar {
+        padding: 18px 18px 8px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cards-grid {
+        padding: 16px 18px 85px 18px;
+        grid-template-columns: 1fr;
+        /* Trải rộng 1 cột để xem rõ trên màn hẹp */
+        gap: 12px;
+    }
+
+    .bottom-status-bar {
+        padding: 10px 16px;
+        font-size: 11px;
+    }
+
+    .floating-actions {
+        right: 18px;
+        bottom: 35px;
+    }
+}
+
+/* Khi cửa sổ siêu nhỏ (dưới 420px) */
+@media (max-width: 420px) {
+    .sidebar {
+        width: 52px;
+    }
+
+    .top-bar h1 {
+        font-size: 22px;
+    }
+
+    .ct-clock-badge {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .time-display {
+        font-size: 32px;
+    }
+}
+
+
+/* THANH TÓM TẮT REPEAT ALARM */
+.repeat-summary-bar {
+    flex: 1;
+    background: #252525;
+    border: 1px dashed #555;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--accent-gold);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.repeat-summary-bar:hover {
+    background: #2e2e2e;
+    border-color: var(--accent-gold);
+}
+
+/* ============================================================
+   GOOGLE CALENDAR DARK THEME: CUSTOM RECURRENCE (CHUẨN ẢNH GỐC)
+   ============================================================ */
+.g-recur-dialog {
+    background-color: #202124;
+    width: 320px;
+    border-radius: 16px;
+    padding: 24px 20px 18px 24px;
+    color: #e8eaed;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    user-select: none;
+}
+
+.g-recur-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 22px;
+}
+
+.g-recur-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.g-recur-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.g-recur-label {
+    font-size: 14px;
+    color: #9aa0a6;
+}
+
+.g-recur-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* KHỐI STEPPER VỚI MŨI TÊN ▲▼ */
+.g-stepper {
+    display: flex;
+    align-items: center;
+    background-color: #303134;
+    border-radius: 4px;
+    height: 36px;
+    padding: 0 4px 0 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, opacity 0.15s;
+}
+
+.g-stepper:hover {
+    background-color: #35373a;
+}
+
+.g-stepper.disabled {
+    opacity: 0.38;
+    pointer-events: none;
+}
+
+.g-stepper-val {
+    font-size: 14px;
+    color: #ffffff;
+    min-width: 22px;
+    text-align: left;
+}
+
+.g-stepper-arrows {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 6px;
+}
+
+.g-arrow-btn {
+    background: transparent;
+    border: none;
+    color: #c4c7c5;
+    font-size: 11px;
+    line-height: 1;
+    padding: 2px 4px;
+    cursor: pointer;
+    transition: color 0.1s;
+}
+
+.g-arrow-btn:hover {
+    color: #ffffff;
+}
+
+/* CUSTOM DROPDOWN (WEEK, DAY...) */
+.g-dropdown-container {
+    position: relative;
+}
+
+.g-dropdown-btn {
+    background-color: #303134;
+    height: 36px;
+    border-radius: 4px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ffffff;
+    transition: background-color 0.15s;
+}
+
+.g-dropdown-btn:hover {
+    background-color: #35373a;
+}
+
+.g-dropdown-caret {
+    font-size: 11px;
+    color: #9aa0a6;
+    transition: transform 0.2s;
+}
+
+.g-dropdown-caret.open {
+    transform: rotate(180deg);
+}
+
+.g-dropdown-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    background-color: #28292c;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    display: none;
+    flex-direction: column;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.g-dropdown-menu.show {
+    display: flex;
+}
+
+.g-dropdown-item {
+    padding: 8px 14px;
+    font-size: 14px;
+    color: #e8eaed;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.g-dropdown-item:hover {
+    background-color: #3c4043;
+}
+
+.g-dropdown-item.selected {
+    background-color: #3c4043;
+    color: #df9f2d;
+}
+
+/* NÚT THỨ S M T W T F S */
+.g-days-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.g-day-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #303134;
+    border: none;
+    color: #9aa0a6;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    outline: none;
+}
+
+.g-day-btn:hover {
+    background-color: #3c4043;
+    color: #ffffff;
+}
+
+.g-day-btn.active {
+    background-color: #df9f2d;
+    color: #041e49;
+    font-weight: 700;
+}
+
+/* RADIO BUTTONS CHUẨN GOOGLE */
+.g-radio-row {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 12px;
+    user-select: none;
+}
+
+.g-radio-label-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.g-radio-row input[type="radio"],
+.g-radio-label-wrap input[type="radio"] {
+    display: none;
+}
+
+.g-radio-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #9aa0a6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s;
+    flex-shrink: 0;
+}
+
+.g-radio-row input[type="radio"]:checked+.g-radio-circle,
+.g-radio-label-wrap input[type="radio"]:checked+.g-radio-circle {
+    border-color: #df9f2d;
+}
+
+.g-radio-row input[type="radio"]:checked+.g-radio-circle::after,
+.g-radio-label-wrap input[type="radio"]:checked+.g-radio-circle::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #df9f2d;
+}
+
+.g-radio-text {
+    font-size: 14px;
+    color: #e8eaed;
+}
+
+/* NÚT CHỌN NGÀY DẠNG "Jan 25, 2027" */
+.g-date-btn {
+    background-color: #303134;
+    height: 36px;
+    border-radius: 4px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.15s, opacity 0.15s;
+}
+
+.g-date-btn:hover {
+    background-color: #3c4043;
+}
+
+.g-date-btn.disabled {
+    opacity: 0.38;
+    pointer-events: none;
+}
+
+/* NÚT ACTION FOOTER */
+.g-recur-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+.g-btn-cancel {
+    background: transparent;
+    border: none;
+    color: #df9f2d;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 18px;
+    transition: background-color 0.15s;
+}
+
+.g-btn-cancel:hover {
+    background-color: rgba(168, 199, 250, 0.08);
+}
+
+.g-btn-done {
+    background-color: #df9f2d;
+    border: none;
+    color: #041e49;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 24px;
+    border-radius: 18px;
+    transition: background-color 0.15s;
+}
+
+.g-btn-done:hover {
+    background-color: #8ab4f8;
+}
+
+/* ============================================================
+   BỘ LỊCH THÁNG RIÊNG (CUSTOM CALENDAR PICKER)
+   ============================================================ */
+.cal-popup {
+    background-color: #202124;
+    width: 290px;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+    border: 1px solid #3c4043;
+    color: #e8eaed;
+    user-select: none;
+}
+
+.cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.cal-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.cal-nav {
+    display: flex;
+    gap: 4px;
+}
+
+.cal-nav-btn {
+    background: transparent;
+    border: none;
+    color: #9aa0a6;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s;
+}
+
+.cal-nav-btn:hover {
+    background-color: #303134;
+    color: #ffffff;
+}
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9aa0a6;
+    margin-bottom: 6px;
+}
+
+.cal-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.cal-day-cell {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #e8eaed;
+}
+
+.cal-day-cell:hover {
+    background-color: #35373a;
+}
+
+.cal-day-cell.other-month {
+    color: #5f6368;
+}
+
+.cal-day-cell.today {
+    border: 1px solid #df9f2d;
+}
+
+.cal-day-cell.selected {
+    background-color: #df9f2d !important;
+    color: #041e49 !important;
+    font-weight: 700;
+}
+
+.cal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #303134;
+}
+
+.cal-action-btn {
+    background: transparent;
+    border: none;
+    color: #df9f2d;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.cal-action-btn:hover {
+    background-color: rgba(168, 199, 250, 0.08);
+}
+
+/* DROPDOWN CHỌN THÁNG (MONTHLY RECURRENCE) */
+.g-month-dropdown-btn {
+    background-color: #303134;
+    height: 38px;
+    border-radius: 4px 4px 0 0;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ffffff;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+    width: 100%;
+}
+
+.g-month-dropdown-btn.active {
+    border-bottom-color: #a8c7fa;
+    background-color: #35373a;
+}
+
+.g-month-dropdown-menu {
+    width: 100%;
+    top: 42px;
+}
+
+/* TOAST NOTIFICATION KHI CÓ ĐỒNG BỘ */
+.sync-toast {
+    position: fixed;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d2312;
+    border: 1px solid var(--accent-gold);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    max-width: 90%;
+}
+
+.sync-toast i {
+    color: var(--accent-gold);
+    font-size: 18px;
+}
+
+.sync-toast.show {
+    top: 24px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.alarm-card.is-drag-ready {
+    background-color: #382c12 !important;
+    border: 2px solid var(--accent-gold) !important;
+    box-shadow: 0 10px 30px rgba(243, 179, 62, 0.5) !important;
+    transform: scale(1.04) translateY(-3px);
+    z-index: 50;
+    cursor: grabbing !important;
+    transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    animation: pulseBorder 1.5s infinite;
+}
+
+@keyframes pulseBorder {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 179, 62, 0.6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(243, 179, 62, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(243, 179, 62, 0);
+    }
+}
+
+body.is-reordering-alarms {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* DÒNG HƯỚNG DẪN GIỮ ĐÈ Ở GIỮA */
+.drag-hint-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed #555;
+    color: #a0a0a0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+
+.drag-hint-badge i {
+    color: var(--accent-gold);
+    font-size: 13px;
+}
+
+/* KHUNG CHỨA 2 MỐI GIỜ XẾP TRÊN DƯỚI */
+.clocks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+/* HUY HIỆU GIỜ HCM */
+.hcm-clock-badge {
+    background: rgba(76, 175, 80, 0.12);
+    border: 1px solid rgba(76, 175, 80, 0.35);
+    color: #81c784;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* Toast trạng thái thành công */
+.sync-toast.success {
+    background: #192a1d;
+    border-color: rgba(76, 175, 80, 0.6);
+}
+
+.sync-toast.success i {
+    color: #81c784;
+}
+
+/* Mặc định ẩn các tính năng chỉ dành riêng cho PC */
+.pc-only {
+    display: none !important;
+}
+
+/* ============================================================
+   SNOOZE CARD STYLES (#f3713e & FULL WHITE TEXT)
+   ============================================================ */
+
+/* Thẻ Snooze thay thế cho nút Toggle Switch ở góc trên phải */
+.snooze-status-pill {
+    background-color: #f3713e;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(243, 113, 62, 0.35);
+    user-select: none;
+}
+
+/* Nút Snooze ... minute(s) trên thân thẻ */
+.snooze-badge-wrapper {
+    margin: 4px 0 6px 0;
+}
+
+.btn-cancel-snooze {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(243, 113, 62, 0.15);
+    color: #f3713e;
+    border: 1px solid #f3713e;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel-snooze i {
+    font-size: 11px;
+}
+
+.btn-cancel-snooze .cancel-x {
+    font-size: 11px;
+    margin-left: 2px;
+    font-weight: bold;
+}
+
+/* Rê chuột vào nút sẽ chuyển sang đỏ để cảnh báo thao tác hủy */
+.btn-cancel-snooze:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    color: #ffffff;
+}
+
+/* Đảm bảo toàn bộ chữ trên thẻ đang Snooze luôn giữ màu trắng sáng tuyệt đối */
+.alarm-card.is-snoozed {
+    opacity: 1 !important;
+}
+
+.alarm-card.is-snoozed .time-display,
+.alarm-card.is-snoozed .time-ampm,
+.alarm-card.is-snoozed .alarm-title {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* ============================================================
+   BUILD MENU PANEL STYLES
+   ============================================================ */
+.build-modal-card {
+    max-width: 420px;
+    width: 90%;
+    background: #252525;
+    border: 1px solid #3c3c3c;
+    border-radius: 12px;
+    padding: 18px 20px 22px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.build-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.build-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.build-btn .btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.build-btn .btn-left i {
+    font-size: 16px;
+}
+
+/* Nút Supabase (Xanh lục ngọc) */
+.btn-supabase {
+    background: rgba(62, 207, 142, 0.1);
+    color: #3ecf8e;
+    border-color: rgba(62, 207, 142, 0.3);
+}
+.btn-supabase:hover {
+    background: #3ecf8e;
+    color: #000;
+}
+
+/* Nút Google Apps Script (Xanh dương Google) */
+.btn-gas {
+    background: rgba(66, 133, 244, 0.1);
+    color: #669df6;
+    border-color: rgba(66, 133, 244, 0.3);
+}
+.btn-gas:hover {
+    background: #4285f4;
+    color: #fff;
+}
+
+/* Nút GitHub */
+.btn-github {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f0f6fc;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.btn-github:hover {
+    background: #ffffff;
+    color: #000;
+}

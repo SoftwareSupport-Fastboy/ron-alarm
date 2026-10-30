@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ron's Clock - Central Time</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-header">
+        <i class="fa-regular fa-clock"></i>
+        <span>Ron's Clock</span>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item" onclick="switchTab('timer')">
+          <i class="fa-solid fa-hourglass-half"></i>
+          <span>Ron's Timer</span>
+        </li>
+        <li class="nav-item active" onclick="switchTab('alarm')">
+          <i class="fa-regular fa-bell"></i>
+          <span>Ron's Alarm</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="user-profile">
+        <div class="avatar">RN</div>
+        <span style="font-size: 14px; font-weight: 500;">Ron Nguyen</span>
+      </div>
+
+      <!-- SETTINGS VỚI MENU DROPDOWN -->
+      <div class="settings-wrapper" style="position: relative; margin-top: 4px;">
+        <div class="nav-item" id="settingsNavItem" onclick="toggleSettingsMenu(event)">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </div>
+
+        <!-- Menu Settings -->
+        <div class="settings-menu" id="settingsMenu">
+          <!-- Trong thẻ #settingsMenu, thêm 3 mục mới: -->
+          <div class="settings-menu-item" onclick="openBuildMenuModal()">
+            <i class="fa-solid fa-screwdriver-wrench"></i> Build Menu
+          </div>
+
+          <div class="settings-menu-item" onclick="openWebsite()">
+            <i class="fa-solid fa-globe"></i> Website
+          </div>
+
+          <div class="settings-menu-item" onclick="sendTestAlarmEmail()">
+            <i class="fa-solid fa-paper-plane"></i> Test Alarm Email
+          </div>
+
+
+          <div class="settings-menu-item" onclick="openNotificationEmailsModal()">
+            <i class="fa-regular fa-envelope"></i>
+            <span>Notification Emails</span>
+          </div>
+
+          <!-- Chỉ hiển thị trên PC: Open Alarm Panel -->
+          <div class="settings-menu-item pc-only" onclick="openAlarmPreviewPanel()">
+            <i class="fa-regular fa-bell"></i>
+            <span>Open Alarm Panel</span>
+          </div>
+
+          <div class="settings-menu-divider"></div>
+
+          <div class="settings-menu-item danger" onclick="clearAllCache()">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Clear All Cache</span>
+          </div>
+
+          <!-- Chỉ hiển thị trên PC: Reset Apps -->
+          <div class="settings-menu-item danger pc-only" onclick="confirmResetApps()">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Reset Apps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main-container">
+    <div id="alarmView">
+      <div class="top-bar">
+        <h1>Ron's Alarm</h1>
+
+        <!-- DÒNG CHỮ HƯỚNG DẪN Ở GIỮA -->
+        <div class="drag-hint-badge">
+          <i class="fa-solid fa-hand-pointer"></i>
+          <span>Hold 1s to reorder alarms</span>
+        </div>
+
+        <!-- CỤM ĐỒNG HỒ CENTRAL TIME VÀ HCM TIME -->
+        <div class="clocks-container">
+          <div class="ct-clock-badge">
+            <i class="fa-regular fa-clock"></i>
+            <span id="ctClockText">Central Time: Loading...</span>
+          </div>
+          <div class="hcm-clock-badge">
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="hcmClockText">HCM Time: Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="cardsContainer"></div>
+
+      <div class="bottom-status-bar">
+        <i class="fa-solid fa-triangle-exclamation" style="color: #f3b33e;"></i>
+        <span>Alarms will sound only when your PC is awake. Central Time synchronization is strictly applied.</span>
+      </div>
+
+      <div class="floating-actions">
+        <button class="btn-circle" onclick="fetchAlarms()" title="Refresh"><i
+            class="fa-solid fa-rotate-right"></i></button>
+        <button class="btn-circle primary" onclick="openAddModal()" title="Add alarm"><i
+            class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div id="timerView">
+      <i class="fa-solid fa-hourglass-start" style="font-size: 48px; color: #555; margin-bottom: 16px;"></i>
+      <h2>Ron's Timer</h2>
+      <p style="margin-top: 8px;">The Ron's Timer feature is currently under development and will be available soon.</p>
+    </div>
+  </main>
+
+  <!-- MODAL: ADD / EDIT ALARM -->
+  <div class="modal-overlay" id="alarmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalAlarmTitle">Edit alarm</h3>
+        <i class="fa-solid fa-xmark" style="cursor: pointer; color: #888;" onclick="closeModal('alarmModal')"></i>
+      </div>
+
+      <!-- TIME PICKER -->
+      <div class="time-picker-container">
+        <div class="chevrons-row">
+          <button type="button" class="wheel-btn" onclick="stepHour(1)"><i class="fa-solid fa-chevron-up"></i></button>
+          <div class="chevron-spacer"></div>
+          <button type="button" class="wheel-btn" onclick="stepMinute(1)"><i
+              class="fa-solid fa-chevron-up"></i></button>
+          <div class="chevron-spacer"></div>
+          <button type="button" class="wheel-btn" onclick="toggleAmPm()"><i class="fa-solid fa-chevron-up"></i></button>
+        </div>
+
+        <div class="time-box">
+          <div class="time-cell" id="pickHour" tabindex="0">10</div>
+          <div class="time-sep">:</div>
+          <div class="time-cell" id="pickMinute" tabindex="0">45</div>
+          <div class="time-sep">:</div>
+          <div class="time-cell ampm" id="pickAmPm" tabindex="0">PM</div>
+        </div>
+
+        <div class="chevrons-row">
+          <button type="button" class="wheel-btn" onclick="stepHour(-1)"><i
+              class="fa-solid fa-chevron-down"></i></button>
+          <div class="chevron-spacer"></div>
+          <button type="button" class="wheel-btn" onclick="stepMinute(-1)"><i
+              class="fa-solid fa-chevron-down"></i></button>
+          <div class="chevron-spacer"></div>
+          <button type="button" class="wheel-btn" onclick="toggleAmPm()"><i
+              class="fa-solid fa-chevron-down"></i></button>
+        </div>
+      </div>
+
+      <!-- ALARM NAME -->
+      <div class="modal-row" style="margin-bottom: 6px;">
+        <i class="fa-regular fa-pen-to-square row-icon"></i>
+        <input type="text" id="modalNote" class="row-input" placeholder="Alarm description">
+      </div>
+
+      <!-- QUICK TAGS -->
+      <div class="modal-row sub-row" style="margin-bottom: 12px;">
+        <div class="row-icon-space"></div>
+        <div class="quick-tags">
+          <button type="button" class="quick-tag" onclick="setQuickNote('Meeting')">Meeting</button>
+          <button type="button" class="quick-tag" onclick="setQuickNote('Report')">Report</button>
+          <button type="button" class="quick-tag" onclick="setQuickNote('SMS')">SMS</button>
+          <button type="button" class="quick-tag" onclick="setQuickNote('SooBee/Dino')">SooBee/Dino</button>
+        </div>
+      </div>
+
+      <!-- SPECIFIC DATE -->
+      <div class="modal-row no-border">
+        <div class="row-icon-space"></div>
+        <label class="win-check">
+          <input type="checkbox" id="chkSpecificDate" onchange="toggleSpecificDate()">
+          <span class="win-box"></span>
+          <span>Specific Date</span>
+        </label>
+      </div>
+
+      <!-- CUSTOM CALENDAR INPUT -->
+      <div class="modal-row sub-row" id="specificDateField" style="display: none;">
+        <i class="fa-regular fa-calendar-days row-icon"></i>
+        <div class="g-date-btn" id="modalDateBtn" onclick="openCustomCalendar('modalDate')">
+          <span id="modalDateLabel">Oct 27, 2026</span>
+          <i class="fa-regular fa-calendar" style="font-size: 13px; color: #9aa0a6;"></i>
+        </div>
+        <input type="hidden" id="modalDate" value="">
+      </div>
+
+      <!-- REPEAT ALARM -->
+      <div class="modal-row no-border">
+        <div class="row-icon-space"></div>
+        <label class="win-check">
+          <input type="checkbox" id="chkRepeat" onchange="toggleRepeatAlarm()">
+          <span class="win-box"></span>
+          <span>Repeat alarm</span>
+        </label>
+      </div>
+
+      <!-- REPEAT SUMMARY -->
+      <div class="modal-row sub-row" id="repeatConfigRow" style="display: none;">
+        <div class="row-icon-space"></div>
+        <div class="repeat-summary-bar" onclick="openCustomRecurrenceModal()">
+          <span id="repeatSummaryText">Every week on Mon</span>
+          <i class="fa-solid fa-pen" style="font-size: 11px;"></i>
+        </div>
+      </div>
+
+      <!-- SOUND SELECTION -->
+      <div class="modal-row">
+        <i class="fa-solid fa-music row-icon"></i>
+        <!-- Nút Play nghe thử trước -->
+        <button type="button" class="btn-sound-play" id="btnPreviewSound" onclick="togglePreviewSound()"
+          title="Nghe thử âm thanh">
+          <i class="fa-solid fa-play"></i>
+        </button>
+        <div class="row-select-wrap">
+          <select id="modalSound" class="row-select" onchange="onSoundChange()">
+            <!-- Tùy chọn sẽ được nạp tự động qua JavaScript -->
+          </select>
+          <i class="fa-solid fa-chevron-down select-chevron"></i>
+        </div>
+      </div>
+
+      <!-- SNOOZE TIME -->
+      <div class="modal-row">
+        <i class="fa-solid fa-bed row-icon"></i>
+        <div class="row-select-wrap">
+          <select id="modalSnooze" class="row-select">
+            <option value="5">5 minutes</option>
+            <option value="10">10 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="20" selected>20 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+          </select>
+          <i class="fa-solid fa-chevron-down select-chevron"></i>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button type="button" class="modal-btn save" id="btnSaveAlarm" onclick="saveAlarm()">
+          <i class="fa-regular fa-floppy-disk"></i>
+          <span>Save</span>
+        </button>
+        <button type="button" class="modal-btn cancel" onclick="closeModal('alarmModal')">
+          <i class="fa-solid fa-xmark"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CUSTOM RECURRENCE -->
+  <div class="modal-overlay" id="customRecurrenceModal" style="z-index: 150;">
+    <div class="g-recur-dialog">
+      <h3 class="g-recur-title">Custom recurrence</h3>
+
+      <!-- 1. Repeat every -->
+      <div class="g-recur-row">
+        <span class="g-recur-label">Repeat every</span>
+        <div class="g-recur-inputs">
+
+          <!-- Stepper with caret arrows -->
+          <div class="g-stepper">
+            <span class="g-stepper-val" id="recurIntervalDisplay">1</span>
+            <div class="g-stepper-arrows">
+              <button type="button" class="g-arrow-btn" onclick="stepInterval(1)"><i
+                  class="fa-solid fa-caret-up"></i></button>
+              <button type="button" class="g-arrow-btn" onclick="stepInterval(-1)"><i
+                  class="fa-solid fa-caret-down"></i></button>
+            </div>
+          </div>
+
+          <!-- Unit dropdown -->
+          <div class="g-dropdown-container">
+            <div class="g-dropdown-btn" id="recurUnitBtn" onclick="toggleUnitDropdown()">
+              <span id="recurUnitLabel">week</span>
+              <i class="fa-solid fa-caret-down g-dropdown-caret" id="recurUnitCaret"></i>
+            </div>
+            <div class="g-dropdown-menu" id="recurUnitMenu">
+              <div class="g-dropdown-item" onclick="selectRecurUnit('day')">day</div>
+              <div class="g-dropdown-item selected" onclick="selectRecurUnit('week')">week</div>
+              <div class="g-dropdown-item" onclick="selectRecurUnit('month')">month</div>
+              <div class="g-dropdown-item" onclick="selectRecurUnit('year')">year</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. Repeat on: Sun Mon Tue Wed Thu Fri Sat -->
+      <div class="g-recur-col" id="recurOnWeekGroup">
+        <span class="g-recur-label">Repeat on</span>
+        <div class="g-days-row">
+          <button type="button" class="g-day-btn" data-day="0" onclick="toggleRecurDay(this)">Sun</button>
+          <button type="button" class="g-day-btn active" data-day="1" onclick="toggleRecurDay(this)">Mon</button>
+          <button type="button" class="g-day-btn" data-day="2" onclick="toggleRecurDay(this)">Tue</button>
+          <button type="button" class="g-day-btn" data-day="3" onclick="toggleRecurDay(this)">Wed</button>
+          <button type="button" class="g-day-btn" data-day="4" onclick="toggleRecurDay(this)">Thu</button>
+          <button type="button" class="g-day-btn" data-day="5" onclick="toggleRecurDay(this)">Fri</button>
+          <button type="button" class="g-day-btn" data-day="6" onclick="toggleRecurDay(this)">Sat</button>
+        </div>
+      </div>
+
+      <!-- 2b. Repeat on (Monthly) -->
+      <div class="g-recur-col" id="recurOnMonthGroup" style="display: none;">
+        <div class="g-dropdown-container" style="width: 100%;">
+          <div class="g-month-dropdown-btn" id="recurMonthBtn" onclick="toggleMonthDropdown()">
+            <span id="recurMonthLabel">Monthly on day 26</span>
+            <i class="fa-solid fa-caret-down g-dropdown-caret" id="recurMonthCaret"></i>
+          </div>
+          <div class="g-dropdown-menu g-month-dropdown-menu" id="recurMonthMenu"></div>
+        </div>
+      </div>
+
+      <!-- 3. Ends: Never / On / After -->
+      <div class="g-recur-col">
+        <span class="g-recur-label">Ends</span>
+
+        <label class="g-radio-row">
+          <input type="radio" name="gRecurEnds" id="gEndNever" value="never" checked onchange="onRecurEndChange()">
+          <span class="g-radio-circle"></span>
+          <span class="g-radio-text">Never</span>
+        </label>
+
+        <div class="g-radio-row" style="align-items: center;">
+          <label class="g-radio-label-wrap">
+            <input type="radio" name="gRecurEnds" id="gEndOn" value="on" onchange="onRecurEndChange()">
+            <span class="g-radio-circle"></span>
+            <span class="g-radio-text">On</span>
+          </label>
+          <div class="g-date-btn disabled" id="recurEndDateBtn" onclick="openCustomCalendar('recurEndDate')">
+            <span id="recurEndDateLabel">Jan 25, 2027</span>
+          </div>
+          <input type="hidden" id="recurEndDate" value="2027-01-25">
+        </div>
+
+        <div class="g-radio-row" style="align-items: center;">
+          <label class="g-radio-label-wrap">
+            <input type="radio" name="gRecurEnds" id="gEndAfter" value="after" onchange="onRecurEndChange()">
+            <span class="g-radio-circle"></span>
+            <span class="g-radio-text">After</span>
+          </label>
+          <div class="g-stepper disabled" id="occurrencesStepper">
+            <span class="g-stepper-val" id="recurOccurrencesDisplay">13</span>
+            <div class="g-stepper-arrows">
+              <button type="button" class="g-arrow-btn" onclick="stepOccurrences(1)"><i
+                  class="fa-solid fa-caret-up"></i></button>
+              <button type="button" class="g-arrow-btn" onclick="stepOccurrences(-1)"><i
+                  class="fa-solid fa-caret-down"></i></button>
+            </div>
+          </div>
+          <span class="g-radio-text" style="color: #c4c7c5; margin-left: 6px;">occurrences</span>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="g-recur-actions">
+        <button type="button" class="g-btn-cancel" onclick="closeCustomRecurrenceModal()">Cancel</button>
+        <button type="button" class="g-btn-done" onclick="saveCustomRecurrence()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CUSTOM CALENDAR -->
+  <div class="modal-overlay" id="customCalendarModal" style="z-index: 200;">
+    <div class="cal-popup">
+      <div class="cal-header">
+        <span class="cal-title" id="calMonthYearText">October 2026</span>
+        <div class="cal-nav">
+          <button type="button" class="cal-nav-btn" onclick="calPrevMonth()"><i
+              class="fa-solid fa-chevron-left"></i></button>
+          <button type="button" class="cal-nav-btn" onclick="calNextMonth()"><i
+              class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="cal-weekdays">
+        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+      </div>
+      <div class="cal-days-grid" id="calDaysGrid"></div>
+      <div class="cal-footer">
+        <button type="button" class="cal-action-btn" onclick="calSelectToday()">Today</button>
+        <button type="button" class="cal-action-btn" onclick="closeCustomCalendar()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NOTIFICATION EMAILS -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content" style="width: 440px;">
+      <div class="modal-header">
+        <h3><i class="fa-regular fa-envelope" style="margin-right: 8px; color: var(--accent-gold);"></i>Notification
+          Emails</h3>
+        <i class="fa-solid fa-xmark" style="cursor: pointer; color: #888;" onclick="closeModal('settingsModal')"></i>
+      </div>
+
+      <div class="modal-input-group">
+        <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Notification emails
+          (comma-separated):</label>
+        <textarea id="settingsEmails" class="modal-input" rows="4" style="resize: vertical;"
+          placeholder="loc_nguyen@fastboy.net, nguyentrongtanloc1993@gmail.com"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn save" onclick="saveSettings()">Save Settings</button>
+        <button class="modal-btn cancel" onclick="closeModal('settingsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM CLEAR CACHE -->
+  <div class="modal-overlay" id="clearCacheModal" style="z-index: 1000;">
+    <div class="modal-content" style="max-width: 360px;">
+      <div class="modal-header" style="margin-bottom: 14px;">
+        <h3 style="display: flex; align-items: center; gap: 8px; color: #ff5252; font-size: 17px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Clear All Cache?</span>
+        </h3>
+        <i class="fa-solid fa-xmark" style="cursor: pointer; color: #888;" onclick="closeModal('clearCacheModal')"></i>
+      </div>
+
+      <p style="font-size: 13.5px; color: #ccc; line-height: 1.5; margin-bottom: 22px;">
+        All local data (offline alarms, custom order...) will be cleared. Data will be freshly reloaded from the server.
+      </p>
+
+      <div class="modal-footer" style="margin-top: 0;">
+        <button type="button" class="modal-btn danger" onclick="executeClearCache()">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Clear Cache</span>
+        </button>
+        <button type="button" class="modal-btn cancel" onclick="closeModal('clearCacheModal')">
+          <i class="fa-solid fa-xmark"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM RESET APPS -->
+  <div class="modal-overlay" id="resetAppsModal" style="z-index: 1000;">
+    <div class="modal-content" style="max-width: 380px;">
+      <div class="modal-header" style="margin-bottom: 14px;">
+        <h3 style="display: flex; align-items: center; gap: 8px; color: #ff5252; font-size: 17px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Reset Application?</span>
+        </h3>
+        <i class="fa-solid fa-xmark" style="cursor: pointer; color: #888;" onclick="closeModal('resetAppsModal')"></i>
+      </div>
+
+      <p style="font-size: 13.5px; color: #ccc; line-height: 1.5; margin-bottom: 22px;">
+        All files (HTML, CSS, JS, sound files, cache) in the folder will be deleted. Ron's Alarm will automatically
+        restart and re-download everything from scratch.
+      </p>
+
+      <div class="modal-footer" style="margin-top: 0;">
+        <button type="button" class="modal-btn danger" onclick="executeResetApps()">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span>Reset & Restart</span>
+        </button>
+        <button type="button" class="modal-btn cancel" onclick="closeModal('resetAppsModal')">
+          <i class="fa-solid fa-xmark"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Build Menu Modal -->
+  <div id="buildMenuModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card build-modal-card">
+      <div class="modal-header">
+        <h3 style="margin: 0; font-size: 16px; color: #fff;">
+          <i class="fa-solid fa-screwdriver-wrench" style="color: #f3b33e; margin-right: 8px;"></i> Build Menu
+        </h3>
+        <i class="fa-solid fa-xmark" style="cursor: pointer; color: #888;" onclick="closeModal('buildMenuModal')"></i>
+      </div>
+
+      <div class="build-menu-list">
+        <a href="https://supabase.com/dashboard/project/bhdnbreeuzscugtthxkn" target="_blank" rel="noopener noreferrer"
+          class="build-btn btn-supabase">
+          <div class="btn-left">
+            <i class="fa-solid fa-database"></i>
+            <span>Supabase Dashboard</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+
+        <a href="https://script.google.com/home/projects/1I1nznPYzHmpnmiZeh7UFPTa8zaqMeGM0kxAk_skp2XvTCi54AKLF1Nfz"
+          target="_blank" rel="noopener noreferrer" class="build-btn btn-gas">
+          <div class="btn-left">
+            <i class="fa-solid fa-code"></i>
+            <span>Google Apps Script</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+
+        <a href="https://github.com/SoftwareSupport-Fastboy/ron-alarm" target="_blank" rel="noopener noreferrer"
+          class="build-btn btn-github">
+          <div class="btn-left">
+            <i class="fa-brands fa-github"></i>
+            <span>GitHub Repository</span>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
